@@ -1,0 +1,102 @@
+/* update.css */
+
+.container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.app-form, .results-section {
+  max-width: 800px;
+  margin: auto;
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.fileInput, .AggrNumber {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.aggrNumberLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.btn-wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-primary, .btn-back, .btn-secondary {
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-back {
+  background-color: #6c757d;
+  color: white;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.results-table th {
+  background-color: #f1f1f1;
+}
+
+.Completed {
+  color: green;
+  font-weight: bold;
+}
+
+.Error {
+  color: red;
+  font-weight: bold;
+}
+
+.adjust {
+  text-align: center;
+}
+
+.results {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.error-message {
+  margin-top: 1rem;
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}

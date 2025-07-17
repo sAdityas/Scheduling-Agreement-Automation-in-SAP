@@ -1,0 +1,120 @@
+/* export.css */
+
+/* Container Setup */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f8faff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Styling */
+.app-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.aggrNumberLabel {
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.AggrNumber {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+}
+
+/* Buttons */
+.btn-primary {
+  padding: 10px 20px;
+  background-color: #2962ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #0039cb;
+}
+
+.btn-primary:disabled {
+  background-color: #9db2ff;
+  cursor: not-allowed;
+}
+
+/* Results Table */
+.results-section {
+  margin-top: 30px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #e8f0fe;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.results-table th,
+.results-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border: 1px solid #cfd8dc;
+}
+
+.results-table th {
+  background-color: #2962ff;
+  color: white;
+}
+
+.results-table td {
+  background-color: #e3f2fd;
+  font-size: 14px;
+}
+
+/* Status Styling */
+.Completed {
+  color: green;
+  font-weight: 600;
+}
+
+.Error {
+  color: red;
+  font-weight: 600;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Button Wrappers */
+.btn-wrapper, .btn-wrapper-main {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.adjust {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.results {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0039cb;
+}
