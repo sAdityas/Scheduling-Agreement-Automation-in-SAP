@@ -90,12 +90,12 @@ def main():
                 'error': None,
                 'status': None
             }
-
+            print(item_results['material'])
             try:
                 gotoCode(session)
                 enterSchN(session, aggrNumber)
 
-                goto_result = gotoMat(session, material)
+                goto_result = gotoMat(session,material)
                 if not goto_result:
                     item_results["error"] = "Material not found in SAP"
                     item_results["status"] = "Skipped"

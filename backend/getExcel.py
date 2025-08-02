@@ -38,7 +38,7 @@ def getExcelData(session, aggrNumber):
                 ):
                     break
 
-
+                print(item_number)
                 seen_items.add(item_number)
                 found_valid_row = True  # ✅ Mark that we got a valid row
 
@@ -49,7 +49,7 @@ def getExcelData(session, aggrNumber):
                     "Unit of Entry": unit_entry.text.strip(),
                     "Open Qty": open_qty.text.strip()
                 })
-                    
+                print(collected_data)    
             except:
                 found_valid_row = False
 
@@ -67,5 +67,5 @@ def getExcelData(session, aggrNumber):
             session.findById("wnd[0]").sendVKey(0)
         except:
             break  # If screen navigation fails
-
+    print(collected_data)
     return collected_data
