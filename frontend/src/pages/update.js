@@ -91,6 +91,7 @@ export default function Update()  {
             className='btn-back'
             type='button'
             onClick={handleHomeNavigate}
+            disabled={loading}
             >
             Back
             </button>
@@ -101,7 +102,7 @@ export default function Update()  {
             <div className='adjust'>
             <h2 className='results'>Results</h2>
             </div>
-            <table className="results-table">
+            <table className="results-tables">
             <thead>
             <tr>
             <th>Material</th>
@@ -136,6 +137,7 @@ export default function Update()  {
             className='btn-back'
             type='button'
             onClick={handleHomeNavigate}
+            disabled={loading}
             >
             Back
             </button>
