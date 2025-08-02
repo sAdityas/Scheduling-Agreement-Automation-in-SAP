@@ -1,20 +1,20 @@
 import time
 
-# Global cache: { MATERIAL → ITEM_NUMBER }
+# Global cache { MATERIAL → ITEM_NUMBER }
 material_item_cache = {}
 
 
 def build_material_item_cache(session):
     """
-    Collect all materials + EBELP (item numbers) from the SAP screen
-    and store them in material_item_cache.
+    Collect all materials + EBELP (item numbers) from SAP
+    and store them in the global cache.
     """
     collected_map = {}
     seen_items = set()
 
     while True:
         row = 0
-        found_valid_row = False  # ✅ detect if new valid row was found
+        found_valid_row = False  # ✅ detect if at least one valid row processed
 
         while True:
             try:
@@ -31,6 +31,7 @@ def build_material_item_cache(session):
                 material = mat_field.text.strip().upper().lstrip("0")  # normalize
                 item_number = item_field.text.strip().zfill(5)
 
+                # skip invalid/duplicates but keep scanning
                 if (
                     not material
                     or not item_number
@@ -40,7 +41,8 @@ def build_material_item_cache(session):
                     or all(c in "_-" for c in material)
                     or all(c in "_-" for c in item_number)
                 ):
-                    break  # invalid entry
+                    row += 1
+                    continue
 
                 seen_items.add(item_number)
                 found_valid_row = True
@@ -51,39 +53,32 @@ def build_material_item_cache(session):
 
             row += 1
 
-        # ✅ Stop if no new rows processed
+        # ⛔ exit outer loop if no new row processed
         if not found_valid_row:
             break
 
-        # 🔁 Move to next EBELP using next visible row
+        # 🔁 move to next EBELP page
         try:
-            next_item_field = session.findById(
-                f"wnd[0]/usr/tblSAPMM06ETC_0222/ctxtRM06E-EVRTP[0,{row}]"
-            )
-            next_item_value = next_item_field.text.strip()
-
-            if not next_item_value or not next_item_value.isdigit():
-                break  # no more navigation possible
-
-            session.findById("wnd[0]/usr/txtRM06E-EBELP").text = next_item_value
+            last_item = max(seen_items)
+            next_item = str(int(last_item) + 10).zfill(5)
+            session.findById("wnd[0]/usr/txtRM06E-EBELP").text = next_item
             session.findById("wnd[0]").sendVKey(0)
         except:
             break
 
-    # Save results globally
+    # save results globally
     material_item_cache.update(collected_map)
-    print(f"✅ Built material cache with {len(material_item_cache)} entries.{material_item_cache}")
 
 
 def gotoMat(session, material):
     """
     Go to the SAP line item for a given MATERIAL.
-    Uses cached EBELP if available, otherwise builds cache.
+    Uses cached EBELP if available, otherwise scans all pages to build cache.
     """
-    material = material.upper().lstrip("0")  # normalize like cache
+    material = material.upper().lstrip("0")  # normalize
     print(f"In Material Screen: {material}")
 
-    # ✅ Step 1: Ensure cache is built
+    # ✅ Step 1: Build cache if empty
     if not material_item_cache:
         build_material_item_cache(session)
 

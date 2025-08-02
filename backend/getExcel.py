@@ -67,5 +67,4 @@ def getExcelData(session, aggrNumber):
             session.findById("wnd[0]").sendVKey(0)
         except:
             break  # If screen navigation fails
-    print(collected_data)
     return collected_data
