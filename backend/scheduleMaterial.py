@@ -44,3 +44,5 @@ def schMat(session, Date_Type, Delv_Date, SchQty):
                 status_bar_text = "Material Blocked, Deleted or Unknown Error"
         raise Exception(status_bar_text)
 
+ 
+ 

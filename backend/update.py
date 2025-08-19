@@ -59,3 +59,5 @@ def update(session, delv_date, qty):
         except:
             pass
         raise Exception(f"Update Failed: {str(e)}")
+ 
+ 

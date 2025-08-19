@@ -68,3 +68,5 @@ def getExcelData(session, aggrNumber):
         except:
             break  # If screen navigation fails
     return collected_data
+ 
+ 

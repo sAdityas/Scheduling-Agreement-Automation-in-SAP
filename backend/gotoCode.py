@@ -6,3 +6,5 @@ def gotoCode(session):
         session.findById("wnd[0]").sendVKey(0)
     except:
         raise Exception("Error: Cannot locate to Transaction ME38")
+ 
+ 

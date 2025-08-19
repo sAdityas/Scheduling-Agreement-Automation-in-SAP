@@ -10,4 +10,5 @@ def connection():
 
         return session
     except:
-        raise Exception(f'SAP not logged in')
+        raise Exception(f'SAP not logged in') 
+ 
