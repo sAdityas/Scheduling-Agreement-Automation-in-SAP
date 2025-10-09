@@ -35,9 +35,11 @@ def update(session, delv_date, qty):
                 # Confirm & Save
                 session.findById("wnd[0]").sendVKey(0)
                 time.sleep(0.5)
+                session.findById("wnd[0]").sendVKey(0)
+                time.sleep(0.5)
+                session.findById("wnd[0]").sendVKey(0)
+                time.sleep(0.5)
                 session.findById("wnd[0]/tbar[0]/btn[11]").press()  # Save
-                session.findById("wnd[1]/tbar[0]/btn[0]").press()
-                session.findById("wnd[1]/tbar[0]/btn[0]").press()
                 session.findById("wnd[1]/tbar[0]/btn[0]").press()
                 try:
                     
