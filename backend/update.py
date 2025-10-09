@@ -37,6 +37,8 @@ def update(session, delv_date, qty):
                 time.sleep(0.5)
                 session.findById("wnd[0]/tbar[0]/btn[11]").press()  # Save
                 session.findById("wnd[1]/tbar[0]/btn[0]").press()
+                session.findById("wnd[1]/tbar[0]/btn[0]").press()
+                session.findById("wnd[1]/tbar[0]/btn[0]").press()
                 try:
                     
                     session.findById("wnd[1]/usr/btnSPOP-OPTION1").press()
