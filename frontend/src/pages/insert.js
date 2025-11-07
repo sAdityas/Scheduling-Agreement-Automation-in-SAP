@@ -35,6 +35,7 @@ export default function Insert()  {
             body: formData,
         });
         const data = await response.json();
+        console.log(data)
         if(!response.ok){
             setError(data.error || 'An error occurred while processing.');
         }else{
@@ -52,20 +53,18 @@ export default function Insert()  {
         }
     };
 
-    
-    
-
     // Add navigation to /export
     const handleExportNavigate = () => {
         window.location.href = '/export';
     };
 
-    const handleUpdateNavigate = () => {
-        window.location.href = '/update'
-    }
-
     return (
-        <div className="container">
+        <div className="insert-container">
+            <div className='main-container'>
+                <div className='title'>
+                    <h2>Insert New Schedule</h2>
+                </div>
+                <hr className='breaker'/>
         {(!results || Object.keys(results).length === 0) ? (
         <form onSubmit={handleClick} className='app-form'>
             <input
@@ -74,6 +73,7 @@ export default function Insert()  {
             accept='.csv'
             onChange={handleFileChange}
             required/>
+            <div className='aggrNumber-container'>
             <label className='aggrNumberLabel'>Agreement Number: </label>
             <input 
             minLength={10}
@@ -83,29 +83,27 @@ export default function Insert()  {
             placeholder='Enter Agreement Number'
             onChange={(e) => setAggrNumber(e.target.value)}
             required
-            />    
-            <div className='btn-wrapper-main'>
+            />
+            </div>
+            <div className='button-container'>
             <button
-            className='btn-primary'
+            className={`${loading ? 'btn-primary-loading' : 'btn-primary'}`}
             type='submit'
             disabled={loading}
             >
-            {loading ? 'Processing...' : 'Insert...'}
+            {loading ? (<span className="loader-container">Processing
+                <span className="loader">.</span>
+                <span className="loader">.</span>
+                <span className="loader">.</span>
+            </span>) : ('Insert')}
             </button>
             <button
-            className='btn-primary'
+            className={`${loading ? 'btn-primary-loading' : 'btn-primary'}`}
             type='button'
             onClick={handleExportNavigate}
+            disabled={loading}
             >
             Go to Export
-            </button>
-            
-            <button
-            className='btn-primary'
-            type='button'
-            onClick={handleUpdateNavigate}
-            >
-            Update Agreement
             </button>
             </div>  
         </form>
@@ -121,8 +119,7 @@ export default function Insert()  {
             <th>Date Type</th>
             <th>Delivery Date</th>
             <th>Scheduled Quantity</th>
-            <th>Error</th>
-            <th>Status</th>
+            <th>Final Status</th>
             </tr>
             </thead>
             <tbody>
@@ -132,15 +129,19 @@ export default function Insert()  {
                 <td>{res.date_type?.toString().toUpperCase() ?? '-'}</td>
                 <td>{res.delivery_date?.toString().toUpperCase() ?? '-'}</td>
                 <td>{res.scheduled_quantity?.toString().toUpperCase() ?? '-'}</td>
-                <td>{res.error ?? '-'}</td>
-                <td className={res.error ? 'Error' : 'Completed'}>{res.error ? 'Failed' : 'Success'}</td>
+                {res.updated === null ?
+                <td>{res.error }</td>
+                :
+                <td>{res.updated?.status === 'failed' ? res.updated?.result : "Previous Schedulee Closed with GRN Qty " + res.updated.updatedResult?.GRN }</td>
+                }
+                
             </tr>
             ))}
             </tbody>
             </table>
             <div className='btn-wrapper'>
             <button
-            className='btn-primary'
+            className='btn-primary-upld'
             type='button'
             onClick={() => {window.location.reload();}}
             >
@@ -151,12 +152,7 @@ export default function Insert()  {
         </div>
         )}
         {error && <div className="error-message">{error}</div>}
+            </div>
         </div>
     );
     }
-    
-    /*
-    No additional code is needed here. 
-    The component is already fully defined and exported above.
-    If you see an error, it may be due to the misplaced $PLACEHOLDER$ or an extra closing brace.
-    */

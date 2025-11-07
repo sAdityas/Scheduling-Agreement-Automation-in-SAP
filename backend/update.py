@@ -1,17 +1,20 @@
 import time
+import sys
 
-def update(session, delv_date, qty):
+def update(session):
     try:
         # Focus on the schedule line count field
         session.findById("wnd[0]/usr/txtRM06E-ETNR2").setFocus()
-        last_row_text = session.findById("wnd[0]/usr/txtRM06E-ETNR2").text.strip()
-
+        last_row_text = session.findById("wnd[0]/usr/txtRM06E-ETNR2").text.strip() or 0
         updated = False
-        total_rows = int(last_row_text) if last_row_text.isdigit() else 0
 
-        for r in range(total_rows):
+        for r in range(1,int(last_row_text)):
             try:
                 # Try to get the delivery date field
+                sch = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-MENGE[2,{r}]")
+                schqty = sch.text.strip()
+                time.sleep(1)
+                print(schqty)
                 date_field = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/ctxtRM06E-EEIND[1,{r}]")
                 date = date_field.text.strip()
             except:
@@ -26,32 +29,36 @@ def update(session, delv_date, qty):
                     continue  # If still not visible, skip
 
                 r = 0  # Reset row index after navigation
+            finally:
+                
+                sys.exit()
+            if date and date != "":
+                
+                GRN = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-WEMNG[13,{r}]")
+                upqty = GRN.text
+                if upqty:
+                    session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-MENGE[2,{r}]").text = upqty
 
-            print(f"Checking row {r}: {date} vs {delv_date}")
-            if date == delv_date:
-                print(f"✅ Updating row {r} with quantity {qty}")
-                session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-MENGE[2,{r}]").text = qty
+                    # Confirm & Save
+                    session.findById("wnd[0]").sendVKey(0)
+                    time.sleep(0.5)
+                    session.findById("wnd[0]").sendVKey(0)
+                    time.sleep(0.5)
+                    session.findById("wnd[0]").sendVKey(0)
+                    time.sleep(0.5)
+                    updated = True
+                    return {
+                        'updated' : updated,
+                        'Qty' : upqty,
+                        'Date' : date,
+                    }
 
-                # Confirm & Save
-                session.findById("wnd[0]").sendVKey(0)
-                time.sleep(0.5)
-                session.findById("wnd[0]").sendVKey(0)
-                time.sleep(0.5)
-                session.findById("wnd[0]").sendVKey(0)
-                time.sleep(0.5)
-                session.findById("wnd[0]/tbar[0]/btn[11]").press()  # Save
-                session.findById("wnd[1]/tbar[0]/btn[0]").press()
-                try:
-                    
-                    session.findById("wnd[1]/usr/btnSPOP-OPTION1").press()
-                except:
-                    pass
-                updated = True
-                break  # Stop after successful update
 
         if not updated:
             print("⚠️ No matching delivery date found.")
-        return updated
+        return { 
+            "result" : "⚠️ Np material Difference"   
+        }
 
     except Exception as e:
         try:

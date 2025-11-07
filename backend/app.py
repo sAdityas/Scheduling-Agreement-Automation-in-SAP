@@ -1,3 +1,5 @@
+import sys
+
 # 📦 Important Packages
 from sapConnection import connection 
 from gotoCode import gotoCode
@@ -74,19 +76,23 @@ def main():
             def safe_get(col):
                 val = row_data.get(col, "-")
                 if pd.isna(val) or str(val).strip() == "":
-                    return "0"
+                    return None
                 return str(val).strip()
 
             material = safe_get('Material')
             date_type = safe_get('Date Type')
             delivery_date = safe_get('Delivery Date')
             scheduled_quantity = safe_get('Scheduled Quantity')
+            # ✅ SKIP ROW if ANY of these is NA/empty
+            if not all([material, date_type, delivery_date, scheduled_quantity]):
+                continue
 
             item_results = {
                 "material": material,
                 'date_type': date_type,
                 'delivery_date': delivery_date,
                 'scheduled_quantity': scheduled_quantity,
+                'updated' : None,
                 'error': None,
                 'status': None
             }
@@ -94,7 +100,6 @@ def main():
             try:
                 gotoCode(session)
                 enterSchN(session, aggrNumber)
-
                 goto_result = gotoMat(session,material)
                 if not goto_result:
                     item_results["error"] = "Material not found in SAP"
@@ -102,18 +107,22 @@ def main():
                     results.append(item_results)
                     continue
 
-                schMat(session, date_type, delivery_date, scheduled_quantity)
-                item_results["status"] = "Completed"
+                Updated = schMat(session, date_type, delivery_date, scheduled_quantity)
+                print(Updated)
+                item_results["status"] = "success"
+                item_results["error"] = None   
+                item_results["updated"] = Updated
+
 
             except Exception as e:
                 item_results["error"] = f"Exception: {str(e)}"
-                item_results["status"] = "Error"
+                item_results["status"] = "failed"
 
             results.append(item_results)
     # 🌐 Final Status Check
-    final_status = "Completed"
+    final_status = "success"
     for r in results:
-        if r.get("status") == "Error":
+        if r.get("status") == "failed":
             final_status = "Partial Failure"
             break
         elif r.get("status") == "Skipped" and final_status != "Partial Failure":
@@ -122,7 +131,7 @@ def main():
     return jsonify({
         "results": convert_types(results),
         "status": final_status
-    }), 200 if final_status == "Completed" else 207
+    }), 200 
 
 
 # 📥 Route to Extract Excel Data from SAP
@@ -194,8 +203,8 @@ def updates():
                 enterSchN(session, aggrNumber)
                 
                 gotoMat(session,material)
-                result = update(session, delv_date, qty)
-                results.append({"material": material, 'Delivery Date': delv_date, 'Quantity': qty,  "status": "Updated", "result": result})
+                result = update(session)
+                results.append({"material": material,  "status": "Updated", "result": result})
             except Exception as e:
                 results.append({"material": material, "status": "Failed", "error": str(e)})
 
@@ -210,4 +219,4 @@ def updates():
 
 # ▶️ Run the Flask App
 if __name__ == "__main__":
-    app.run(debug=True, port=5050, host='0.0.0.0')
+    app.run(debug=True, port=5050, host='0.0.0.0', use_reloader=False)

@@ -34,6 +34,8 @@ def build_material_item_cache(session):
                 # skip invalid/duplicates but keep scanning
                 if (
                     not material
+                    or material == ''
+                    or material == '0'
                     or not item_number
                     or item_number in seen_items
                     or "_" in material
@@ -77,6 +79,8 @@ def gotoMat(session, material):
     """
     material = material.upper().lstrip("0")  # normalize
     print(f"In Material Screen: {material}")
+    if not material or material == '' or material == '0':
+        return False
 
     # ✅ Step 1: Build cache if empty
     if not material_item_cache:
