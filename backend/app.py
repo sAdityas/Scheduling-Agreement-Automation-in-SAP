@@ -107,12 +107,15 @@ def main():
                     results.append(item_results)
                     continue
 
-                Updated = schMat(session, date_type, delivery_date, scheduled_quantity)
-                print(Updated)
-                item_results["status"] = "success"
-                item_results["error"] = None   
-                item_results["updated"] = Updated
-
+                Updated = schMat(session, date_type, delivery_date, scheduled_quantity, material)
+                print(f"Updated Res: {Updated}")
+                if Updated:
+                    item_results["error"] = Updated
+                    item_results["status"] = "failed"
+                else:
+                    item_results["status"] = "success"
+                    item_results["error"] = None   
+                    item_results["updated"] = Updated
 
             except Exception as e:
                 item_results["error"] = f"Exception: {str(e)}"
@@ -166,54 +169,54 @@ def get_excel_route():
             "traceback": traceback.format_exc()
         }), 500
 
-@app.route("/update", methods=["POST"])
-def updates():
-    results = []
-    uploaded_file = request.files.get("file")
-    if uploaded_file is None:
-        return jsonify({"error": "No file uploaded"}), 400
+# @app.route("/update", methods=["POST"])
+# def updates():
+#     results = []
+#     uploaded_file = request.files.get("file")
+#     if uploaded_file is None:
+#         return jsonify({"error": "No file uploaded"}), 400
 
-    try:
-        df = pd.read_csv(uploaded_file)
-        df.columns = [col.strip() for col in df.columns]
-    except Exception as e:
-        return jsonify({"error": f"Error reading Excel/CSV: {e}"}), 400
+#     try:
+#         df = pd.read_csv(uploaded_file)
+#         df.columns = [col.strip() for col in df.columns]
+#     except Exception as e:
+#         return jsonify({"error": f"Error reading Excel/CSV: {e}"}), 400
 
-    required_columns = ['Material', 'Delivery Date', 'Scheduled Quantity']
-    for col in required_columns:
-        if col not in df.columns:
-            return jsonify({"error": f"Missing column in Excel: {col}"}), 400
+#     required_columns = ['Material', 'Delivery Date', 'Scheduled Quantity']
+#     for col in required_columns:
+#         if col not in df.columns:
+#             return jsonify({"error": f"Missing column in Excel: {col}"}), 400
 
-    aggrNumber = str(request.form.get("aggrNumber", "")).strip()
-    if not aggrNumber:
-        return jsonify({"error": "Agreement number missing"}), 400
+#     aggrNumber = str(request.form.get("aggrNumber", "")).strip()
+#     if not aggrNumber:
+#         return jsonify({"error": "Agreement number missing"}), 400
 
-    try:
-        session = connection()
-        gotoCode(session)
-        enterSchN(session, aggrNumber)
-        for _, row in df.iterrows():
-            material = str(row['Material']).strip()
-            delv_date = str(row['Delivery Date']).strip().zfill(7)
-            print(delv_date)
-            qty = str(row['Scheduled Quantity']).strip()
+#     try:
+#         session = connection()
+#         gotoCode(session)
+#         enterSchN(session, aggrNumber)
+#         for _, row in df.iterrows():
+#             material = str(row['Material']).strip()
+#             delv_date = str(row['Delivery Date']).strip().zfill(7)
+#             print(delv_date)
+#             qty = str(row['Scheduled Quantity']).strip()
 
-            try:
-                gotoCode(session)
-                enterSchN(session, aggrNumber)
+#             try:
+#                 gotoCode(session)
+#                 enterSchN(session, aggrNumber)
                 
-                gotoMat(session,material)
-                result = update(session)
-                results.append({"material": material,  "status": "Updated", "result": result})
-            except Exception as e:
-                results.append({"material": material, "status": "Failed", "error": str(e)})
+#                 gotoMat(session,material)
+#                 result = update(session)
+#                 results.append({"material": material,  "status": "Updated", "result": result})
+#             except Exception as e:
+#                 results.append({"material": material, "status": "Failed", "error": str(e)})
 
-        return jsonify({"results": results, "status": "Update Completed"}), 200
-    except Exception as e:
-        return jsonify({
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
+#         return jsonify({"results": results, "status": "Update Completed"}), 200
+#     except Exception as e:
+#         return jsonify({
+#             "error": str(e),
+#             "traceback": traceback.format_exc()
+#         }), 500
 
     
 

@@ -8,6 +8,7 @@ export default function Insert()  {
     const [results, setResults] = useState([])
     const [file,setFile] = useState(null)
     const [aggrNumber, setAggrNumber] = useState('')
+    const [finalStatus, setFinalStatus] = useState('')
 
 
     const handleFileChange = (e) =>{
@@ -36,6 +37,7 @@ export default function Insert()  {
         });
         const data = await response.json();
         console.log(data)
+        setFinalStatus(data.status)
         if(!response.ok){
             setError(data.error || 'An error occurred while processing.');
         }else{
@@ -119,6 +121,7 @@ export default function Insert()  {
             <th>Date Type</th>
             <th>Delivery Date</th>
             <th>Scheduled Quantity</th>
+            <th>Status</th>
             <th>Final Status</th>
             </tr>
             </thead>
@@ -134,6 +137,7 @@ export default function Insert()  {
                 :
                 <td>{res.updated?.status === 'failed' ? res.updated?.result : "Previous Schedulee Closed with GRN Qty " + res.updated.updatedResult?.GRN }</td>
                 }
+                <td>{finalStatus ?? '-'}</td>
                 
             </tr>
             ))}

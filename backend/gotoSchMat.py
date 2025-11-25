@@ -83,8 +83,7 @@ def gotoMat(session, material):
         return False
 
     # ✅ Step 1: Build cache if empty
-    if not material_item_cache:
-        build_material_item_cache(session)
+    build_material_item_cache(session)
 
     # ✅ Step 2: Lookup in cache
     if material in material_item_cache:

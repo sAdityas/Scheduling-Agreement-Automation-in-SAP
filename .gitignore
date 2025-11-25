@@ -105,6 +105,12 @@ Thumbs.db
 .env.local
 config.json
 secrets.json
+update.py
+updateTest.py
+test.py
+*.zip
+update.js
+update.css
 
 # Flask/fastapi debug server artifacts
 instance/
