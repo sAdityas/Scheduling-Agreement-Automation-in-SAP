@@ -1,6 +1,5 @@
 import time
 import sys
-from updateTest import update
 from scheduleMaterialWhileLoop import schMatWhile
 
 def schMat(session, Date_Type, Delv_Date, SchQty, material):
@@ -19,33 +18,25 @@ def schMat(session, Date_Type, Delv_Date, SchQty, material):
         session.findById("wnd[0]/usr/txtRM06E-ETNR1").text = str(int(insert_row_number) - 1)
         session.findById("wnd[0]").sendVKey(0)
         last_row_grn = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-WEMNG[13,{0}]").text.strip()
-        session.findById("wnd[0]/usr/txtRM06E-ETNR1").text = 1
         if not last_row_grn or last_row_grn == '':
-            noGrn.append(1)
-            res  = 'GRN Qty not found'     
+            return {
+                "success": False,
+                "error": "GRN Qty not found"
+            }    
 
-        while r <= int(last_row_text):
-            for i in range(0,row + 1):
-                try:
-                    cellSchQty = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-MENGE[2,{i}]").text.strip()
-                    cellGrnQty = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-WEMNG[13,{i}]").text.strip()
 
-                    if session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-WEMNG[13,{i}]").text.strip() == '':
-                        break
-                    else:
-                        print(f"Updating Row {i} Sch Qty from {cellSchQty} to GRN Qty {cellGrnQty}")
-                        session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-MENGE[2,{i}]").text = cellGrnQty
-                        session.findById("wnd[0]").sendVKey(0)
-                except:
-                    pass
-            r += row
-            session.findById("wnd[0]/usr/tblSAPMM06ETC_1117").verticalScrollbar.position = r
+        cellSchQty = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-MENGE[2,{0}]")
+        cellSchQty.setFocus()
+        cellSchQty.text.strip()       
+        cellGrnQty = session.findById(f"wnd[0]/usr/tblSAPMM06ETC_1117/txtEKET-WEMNG[13,{0}]")
+        print(f"Row {1} Sch Qty: {cellGrnQty}")
+        cellGrnQty.setFocus()
+        cellSchQty.text = cellGrnQty.text.strip()
 
-        # If GRN quantity present, update schedule qty for this row
-            if len(noGrn) > 0:
-                session.findById("wnd[0]/tbar[0]/okcd").text = "/n"
-                session.findById('wnd[0]').sendVKey(0)
-                return res
+    # If GRN quantity present, update schedule qty for this row
+        if len(noGrn) > 0:
+            session.findById("wnd[0]/tbar[0]/okcd").text = "/n"
+            session.findById('wnd[0]').sendVKey(0)
 
         # sys.exit()
         #     return res
@@ -65,9 +56,12 @@ def schMat(session, Date_Type, Delv_Date, SchQty, material):
         session.findById("wnd[0]/tbar[0]/btn[11]").press()  
         session.findById("wnd[1]/tbar[0]/btn[0]").press()  # Info popup
         session.findById("wnd[1]/usr/btnSPOP-OPTION1").press()
+        print(cellGrnQty.text.strip())
         return {
-            'grnQty' : cellGrnQty
+            "success": True,
+            "grnQty": cellGrnQty.text.strip()
         }
+
 
     except Exception as e:
         print(e)

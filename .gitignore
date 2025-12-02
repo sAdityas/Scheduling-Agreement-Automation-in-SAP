@@ -34,6 +34,7 @@ lib/
 lib64/
 parts/
 sdist/
+/PuneetSir
 var/
 *.egg-info/
 .installed.cfg
@@ -111,7 +112,9 @@ test.py
 *.zip
 update.js
 update.css
-
+Withgrn.js
+Mode.js
+mode.css
 # Flask/fastapi debug server artifacts
 instance/
 *.db

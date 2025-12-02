@@ -8,7 +8,7 @@ export default function Insert()  {
     const [results, setResults] = useState([])
     const [file,setFile] = useState(null)
     const [aggrNumber, setAggrNumber] = useState('')
-    const [finalStatus, setFinalStatus] = useState('')
+    const [finalStatus, setFinalStatus] = useState(null);
 
 
     const handleFileChange = (e) =>{
@@ -37,7 +37,7 @@ export default function Insert()  {
         });
         const data = await response.json();
         console.log(data)
-        setFinalStatus(data.status)
+        setFinalStatus(data.status);
         if(!response.ok){
             setError(data.error || 'An error occurred while processing.');
         }else{
@@ -65,6 +65,7 @@ export default function Insert()  {
             <div className='main-container'>
                 <div className='title'>
                     <h2>Insert New Schedule</h2>
+                    <p>GRN NOT REQUIRED</p>
                 </div>
                 <hr className='breaker'/>
         {(!results || Object.keys(results).length === 0) ? (
@@ -132,12 +133,15 @@ export default function Insert()  {
                 <td>{res.date_type?.toString().toUpperCase() ?? '-'}</td>
                 <td>{res.delivery_date?.toString().toUpperCase() ?? '-'}</td>
                 <td>{res.scheduled_quantity?.toString().toUpperCase() ?? '-'}</td>
-                {res.updated === null ?
-                <td>{res.error }</td>
-                :
-                <td>{res.updated?.status === 'failed' ? res.updated?.result : "Previous Schedulee Closed with GRN Qty " + res.updated.updatedResult?.GRN }</td>
-                }
-                <td>{finalStatus ?? '-'}</td>
+                <td>
+                {/* If there is no updated info, show error or '-' */}
+                {!res.updated ? (
+                    res.error ?? '-'
+                ) : (
+                    res.status?.toString().toUpperCase() ?? '-'
+                )}
+                </td>
+                <td>{finalStatus ? finalStatus : "-"}</td>
                 
             </tr>
             ))}

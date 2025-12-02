@@ -7,7 +7,6 @@ from enterScheduleNumber import enterSchN
 from scheduleMaterial import schMat
 from gotoSchMat import gotoMat
 from getExcel import getExcelData
-from update import update
 
 
 # 🌐 Flask Libraries
@@ -19,7 +18,7 @@ import traceback
 
 # 🌍 CORS Setup
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"*": {"origins": "*"}})
 
 # 🔁 Type Conversion Helper
 def convert_types(obj):
@@ -109,13 +108,20 @@ def main():
 
                 Updated = schMat(session, date_type, delivery_date, scheduled_quantity, material)
                 print(f"Updated Res: {Updated}")
-                if Updated:
-                    item_results["error"] = Updated
-                    item_results["status"] = "failed"
-                else:
+
+                if Updated.get("success"):
+                    # success case
                     item_results["status"] = "success"
-                    item_results["error"] = None   
-                    item_results["updated"] = Updated
+                    item_results["error"] = None
+                    item_results["updated"] = {
+                        "grnQty": Updated.get("grnQty")
+                    }
+                else:
+                    # failed case
+                    item_results["status"] = "failed"
+                    item_results["error"] = Updated.get("error", "Unknown error")
+                    item_results["updated"] = None
+
 
             except Exception as e:
                 item_results["error"] = f"Exception: {str(e)}"
